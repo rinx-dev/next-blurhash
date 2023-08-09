@@ -70,7 +70,13 @@
   * {
     @apply border-border;
   }
+  html {
+    color-scheme: dark light;
+  }
   body {
     @apply bg-background text-foreground;
+  }
+  header, main, footer {
+    @apply container
   }
 }

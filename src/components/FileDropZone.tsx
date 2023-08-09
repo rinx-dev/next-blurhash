@@ -47,7 +47,7 @@ const FileDropZone = () => {
 
     return (
         <div
-            className={cn("h-full flex items-center justify-center hover:bg-foreground/10", isDragging && "bg-foreground/10")}
+            className={cn("h-full flex items-center justify-center hover:bg-foreground/10 p-3", isDragging && "bg-foreground/10")}
             onDragEnter={handleDragEnter}
             onDragLeave={handleDragLeave}
             onDragOver={handleDragOver}
@@ -61,7 +61,7 @@ const FileDropZone = () => {
                 ref={fileInputRef}
                 style={{ display: 'none' }}
             />
-            <p className="pointer-events-none">{isDragging ? 'Drop the image here' : 'Drag and drop a image here or click to select'}</p>
+            <p className="text-sm sm:text-base text-center pointer-events-none">{isDragging ? 'Drop the image here' : 'Drag and drop a image here or click to select'}</p>
         </div>
     );
 };

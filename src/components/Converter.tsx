@@ -2,15 +2,15 @@
 "use client"
 
 import Image from "next/image";
-import { type ChangeEvent, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { GenerateBlurHashStore } from "@/state/generate-blurhash";
 import { generateBlurHashImage } from "@/generators/blurhash";
 import { cn } from "@/lib/utils";
 import FileDropZone from "@/components/FileDropZone";
 import { Input } from "@/components/ui/input";
-import { Button } from "./ui/button";
-import { LoaderIcon } from "./Icons";
+import { Button } from "@/components/ui/button";
 import { formatFileSizeFromDataURL } from "@/lib/getFileSizeFromDataURL";
+import { Loader2 } from "lucide-react";
 
 export default function Convertor() {
     const { selectedImage, setSelectedImage, generatedData, setGeneratedData, isGenerating, setIsGenerating, isError, setIsError } = GenerateBlurHashStore()
@@ -26,6 +26,7 @@ export default function Convertor() {
                     if (generated) {
                         setGeneratedData(generated)
                         setSelectedBlurType(generated.pngDataUrl)
+                        // navigator.clipboard.writeText(generatedData!.pngDataUrl)
                     }
                 } catch (error) {
                     setIsError(true)
@@ -38,22 +39,34 @@ export default function Convertor() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedImage, selectedImage])
 
-    const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-        setSelectedImage(e.target.value)
+    // const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
+    //     setSelectedImage(e.target.value)
+    // }
+
+
+    const changeSelect = (value: string) => {
+        setSelectedBlurType(value)
     }
 
     return (
-        <div className="grid gap-3">
-            <div className="grid grid-cols-2 gap-6">
+        <section className="grid gap-3">
+            <div className="grid sm:grid-cols-2 gap-6">
                 <div className="relative aspect-video">
                     {selectedImage && <img src={selectedImage} alt="" className="w-full border" />}
-                    <div className={cn("cursor-pointer h-full w-full border border-dashed", selectedImage && "absolute inset-0 opacity-0")}>
+                    <div
+                        className={cn("cursor-pointer h-full w-full border border-dashed", selectedImage && "absolute inset-0 opacity-0")}>
                         <FileDropZone />
                     </div>
                 </div>
                 <div className={cn("relative border flex items-center justify-center", !selectedImage && "aspect-video")}>
-                    {!isGenerating && selectedBlurType && !isError && <Image src={selectedBlurType} fill alt="" />}
-                    {isGenerating ? <div className="animate-spin"><LoaderIcon /></div> : isError ? <p className="text-red-500">Error</p> : <p>Output</p>}
+                    {!isGenerating && selectedBlurType && !isError && <img src={selectedBlurType} alt="" className="w-full" />}
+                    {isGenerating ?
+                        <div className="animate-spin">
+                            <Loader2 className="w-6 h-6" />
+                        </div>
+                        : isError ?
+                            <p className="text-red-500">Error</p> : !selectedBlurType && <p>Output</p>
+                    }
                 </div>
             </div>
             <div className="grid sm:grid-cols-2 gap-6">
@@ -64,29 +77,47 @@ export default function Convertor() {
                     </div> */}
                     {generatedData &&
                         <div className="space-y-2">
-                            <div>BlurHash</div>
+                            <p>BlurHash</p>
                             <Input type="text" value={generatedData.blurHash} readOnly />
                         </div>
                     }
                 </div>
                 <div>
-                    <div className="space-y-2">
-                        <div>DataUrls {selectedBlurType && `(${formatFileSizeFromDataURL(selectedBlurType)})`}</div>
-                        {generatedData &&
+                    {generatedData &&
+                        <div className="space-y-2">
+                            <p>DataUrls {selectedBlurType && <span>({formatFileSizeFromDataURL(selectedBlurType)})</span>}</p>
                             <div className="flex gap-3 flex-col lg:flex-row">
                                 <div className="flex gap-3">
-                                    <Button variant="outline" className={cn("", selectedBlurType === generatedData.webpDataUrl && "bg-secondary")} onClick={() => setSelectedBlurType(generatedData.webpDataUrl)}>WEBP</Button>
-                                    <Button variant="outline" className={cn("", selectedBlurType === generatedData.jpegDataUrl && "bg-secondary")} onClick={() => setSelectedBlurType(generatedData.jpegDataUrl)}>JPEG</Button>
-                                    <Button variant="outline" className={cn("", selectedBlurType === generatedData.pngDataUrl && "bg-secondary")} onClick={() => setSelectedBlurType(generatedData.pngDataUrl)}>PNG</Button>
+                                    <Button
+                                        variant="outline"
+                                        className={cn("", selectedBlurType === generatedData.webpDataUrl && "bg-secondary")}
+                                        onClick={() => changeSelect(generatedData.webpDataUrl)}
+                                    >
+                                        WEBP
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className={cn("", selectedBlurType === generatedData.jpegDataUrl && "bg-secondary")}
+                                        onClick={() => changeSelect(generatedData.jpegDataUrl)}
+                                    >
+                                        JPEG
+                                    </Button>
+                                    <Button
+                                        variant="outline"
+                                        className={cn("", selectedBlurType === generatedData.pngDataUrl && "bg-secondary")}
+                                        onClick={() => changeSelect(generatedData.pngDataUrl)}
+                                    >
+                                        PNG
+                                    </Button>
                                 </div>
                                 <div className="w-full">
                                     <Input value={selectedBlurType} readOnly />
                                 </div>
                             </div>
-                        }
-                    </div>
+                        </div>
+                    }
                 </div>
             </div>
-        </div>
+        </section>
     )
 }
