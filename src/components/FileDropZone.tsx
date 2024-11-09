@@ -1,6 +1,6 @@
 import { cn } from "@/lib/utils";
 import { GenerateBlurHashStore } from "@/state/generate-blurhash";
-import { type DragEvent, useRef, useState, useEffect } from "react";
+import { type DragEvent, useRef, useState } from "react";
 
 const FileDropZone = () => {
     const [isDragging, setIsDragging] = useState(false);

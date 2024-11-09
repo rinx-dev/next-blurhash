@@ -1,4 +1,3 @@
-/* eslint-disable @next/next/no-img-element */
 "use client"
 
 import Image from "next/image";
@@ -13,7 +12,7 @@ import { formatFileSizeFromDataURL } from "@/lib/getFileSizeFromDataURL";
 import { Loader2 } from "lucide-react";
 
 export default function Convertor() {
-    const { selectedImage, setSelectedImage, generatedData, setGeneratedData, isGenerating, setIsGenerating, isError, setIsError } = GenerateBlurHashStore()
+    const { selectedImage, generatedData, setGeneratedData, isGenerating, setIsGenerating, isError, setIsError } = GenerateBlurHashStore()
     const [selectedBlurType, setSelectedBlurType] = useState<string>()
 
     useEffect(() => {
@@ -39,27 +38,22 @@ export default function Convertor() {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [selectedImage, selectedImage])
 
-    // const onInputChange = (e: ChangeEvent<HTMLInputElement>) => {
-    //     setSelectedImage(e.target.value)
-    // }
-
-
     const changeSelect = (value: string) => {
         setSelectedBlurType(value)
     }
 
     return (
         <section className="grid gap-3">
-            <div className="grid sm:grid-cols-2 gap-6">
-                <div className="relative aspect-video">
-                    {selectedImage && <img src={selectedImage} alt="" className="w-full border" />}
+            <div className="grid sm:grid-cols-2 gap-6 overflow-hidden">
+                <div className="relative">
+                    {selectedImage && <Image unoptimized src={selectedImage} alt="" width={200} height={200} className="w-full h-full border" />}
                     <div
                         className={cn("cursor-pointer h-full w-full border border-dashed", selectedImage && "absolute inset-0 opacity-0")}>
                         <FileDropZone />
                     </div>
                 </div>
                 <div className={cn("relative border flex items-center justify-center", !selectedImage && "aspect-video")}>
-                    {!isGenerating && selectedBlurType && !isError && <img src={selectedBlurType} alt="" className="w-full" />}
+                    {!isGenerating && selectedBlurType && !isError && <Image src={selectedBlurType} height={2000} width={2000} alt="" className="w-full h-full" />}
                     {isGenerating ?
                         <div className="animate-spin">
                             <Loader2 className="w-6 h-6" />
@@ -71,10 +65,6 @@ export default function Convertor() {
             </div>
             <div className="grid sm:grid-cols-2 gap-6">
                 <div className="space-y-3">
-                    {/* <div className="space-y-1">
-                        <div>Input Image</div>
-                        <Input placeholder="Paste Image Url" onChange={onInputChange} />
-                    </div> */}
                     {generatedData &&
                         <div className="space-y-2">
                             <p>BlurHash</p>
